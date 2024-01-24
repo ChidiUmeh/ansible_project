@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install updates(Ubuntu)
+    apt:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution_version == "Ubuntu"
+
+  - name: install apache2 and php for ubuntu servers
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
+    when: ansible_distribution_version == "Ubuntu"
+
+- hosts: db_servers
+  become: true
+  tasks:
+  - name: install mariadb package (Ubuntu)
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
