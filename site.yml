@@ -4,18 +4,34 @@
   tasks:
 
   - name: install updates(Ubuntu)
+    tags: always
     apt:
-      update_only: yes
+      upgrade: dist
       update_cache: yes
     when: ansible_distribution_version == "Ubuntu"
 
+
+- hosts: web_servers
+  become: true
+  tasks:
   - name: install apache2 and php for ubuntu servers
+    tags: apache,apache2,ubuntu
     apt:
       name:
         - apache2
         - libapache2-mod-php
       state: latest
     when: ansible_distribution_version == "Ubuntu"
+
+  - name: copy default html file for site
+    tags: apache,apache2,httpd
+    copy:
+       src: default_site.html
+       dest: /var/www/html/index.html
+       owner: root
+       group: root
+       mode: 0644
+
 
 - hosts: db_servers
   become: true
@@ -25,3 +41,4 @@
       name: mariadb-server
       state: latest
     when: ansible_distribution == "Ubuntu"
+
